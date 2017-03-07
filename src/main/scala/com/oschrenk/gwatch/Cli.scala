@@ -4,6 +4,7 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Ref
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.revwalk.RevCommit
 
 import java.io.File
 
@@ -30,6 +31,11 @@ object Cli extends App {
   val branches: Seq[Ref] = asScalaBuffer(git.branchList().call())
   branches.foreach { ref =>
     println(s"Branch: ${ref.getName()} ${ref.getObjectId().getName()}")
+  }
+
+  val commits = (git.log().all().call()).asScala
+  commits.foreach { rev =>
+    println(s"Commit: $rev")
   }
 
 }
