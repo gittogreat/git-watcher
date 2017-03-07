@@ -11,6 +11,16 @@ object Formatters {
    val default: (RevCommit) => String = (rev: RevCommit) => {
      rev.toString
    }
+
+   val oneline: (RevCommit) => String = (rev: RevCommit) => {
+     val id = rev.toObjectId.abbreviate(7).name
+     val short = rev.getShortMessage
+     val author = rev.getAuthorIdent
+     val time = author.getWhen
+     val name = author.getName
+
+     s"$id - $short ($time) <$name>"
+   }
 }
 
 object Cli extends App {
@@ -38,7 +48,7 @@ object Cli extends App {
   }
 
   val commits = git.log().all().call().asScala
-  val format = Formatters.default
+  val format = Formatters.oneline
   commits.foreach { rev =>
     println(format(rev))
   }
