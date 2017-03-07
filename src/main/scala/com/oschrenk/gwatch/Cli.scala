@@ -5,6 +5,13 @@ import java.io.File
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Ref
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.revwalk.RevCommit
+
+object Formatters {
+   val default: (RevCommit) => String = (rev: RevCommit) => {
+     rev.toString
+   }
+}
 
 object Cli extends App {
 
@@ -31,8 +38,9 @@ object Cli extends App {
   }
 
   val commits = git.log().all().call().asScala
+  val format = Formatters.default
   commits.foreach { rev =>
-    println(s"Commit: $rev")
+    println(format(rev))
   }
 
 }
