@@ -13,3 +13,7 @@ sbt assembly
 ```shell
 $ gwatch <dir>
 ```
+
+## Resources
+
+http://www.codeaffine.com/2014/09/22/access-git-repository-with-jgit/
