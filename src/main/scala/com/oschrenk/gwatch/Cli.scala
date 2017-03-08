@@ -8,6 +8,10 @@ import org.eclipse.jgit.lib.Ref
 import org.eclipse.jgit.lib.SymbolicRef
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.revwalk.RevCommit
+import org.eclipse.jgit.revplot.PlotCommitList
+import org.eclipse.jgit.revplot.PlotCommit
+import org.eclipse.jgit.revplot.PlotLane
+import org.eclipse.jgit.revplot.PlotWalk
 
 object Formatters {
    val default: (RevCommit) => String = (rev: RevCommit) => {
@@ -85,4 +89,20 @@ object Cli extends App {
     println(format(rev))
   }
 
+
+  println()
+  val list = new PlotCommitList[PlotLane]()
+  val walk = new PlotWalk(repo)
+  walk.setRetainBody(false)
+
+  val root = walk.parseCommit(repo.resolve("refs/heads/master"))
+  walk.markStart(root)
+
+  list.source(walk)
+  list.fillTo(Integer.MAX_VALUE)
+  list.asScala.toSeq.foreach{c =>
+    println(s"${c.toObjectId.abbreviate(7).name} on lane ${c.getLane.getPosition} ")
+  }
+  walk.close
 }
+
