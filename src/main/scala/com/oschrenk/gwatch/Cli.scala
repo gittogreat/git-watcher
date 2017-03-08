@@ -13,6 +13,8 @@ import org.eclipse.jgit.revplot.PlotCommit
 import org.eclipse.jgit.revplot.PlotLane
 import org.eclipse.jgit.revplot.PlotWalk
 
+case class Node(id: String, refs: Set[String], message: String, lane: Int, parents: Seq[String])
+
 object Formatters {
    val default: (RevCommit) => String = (rev: RevCommit) => {
      rev.toString
@@ -55,6 +57,21 @@ object Formatters {
    }
 }
 
+object Builder {
+   def node(allsRefs: Map[AnyObjectId, Set[Ref]]): (PlotCommit[PlotLane]) => Node = (commit: PlotCommit[PlotLane]) => {
+     val id = commit.toObjectId.abbreviate(7).name
+     val refs: Set[String] = allsRefs.get(commit) match {
+       case Some(refs) => refs.map(Formatters.format)
+       case None => Set.empty
+     }
+     val message = commit.getShortMessage
+     val lane = commit.getLane.getPosition
+     val parents = commit.getParents.map(p => p.toObjectId.abbreviate(7).name)
+
+     Node(id, refs, message, lane, parents)
+   }
+}
+
 object Cli extends App {
 
   import scala.collection.JavaConverters._
@@ -93,15 +110,18 @@ object Cli extends App {
   println()
   val list = new PlotCommitList[PlotLane]()
   val walk = new PlotWalk(repo)
-  walk.setRetainBody(false)
-
-  val root = walk.parseCommit(repo.resolve("refs/heads/master"))
-  walk.markStart(root)
+  // walk.setRetainBody(false)
+  allsRefs.values.reduce(_ ++ _).foreach{ ref =>
+    val root = walk.parseCommit(ref.getObjectId())
+    walk.markStart(root)
+  }
 
   list.source(walk)
   list.fillTo(Integer.MAX_VALUE)
+
+  val builder = Builder.node(allsRefs)
   list.asScala.toSeq.foreach{c =>
-    println(s"${c.toObjectId.abbreviate(7).name} on lane ${c.getLane.getPosition} ")
+    println(builder(c))
   }
   walk.close
 }
