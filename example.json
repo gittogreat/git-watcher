@@ -1,0 +1,27 @@
+{
+  "@context": {
+    "generatedAt": {
+      "@id": "http://www.w3.org/ns/prov#generatedAtTime",
+      "@type": "http://www.w3.org/2001/XMLSchema#dateTime"
+    }
+  },
+  "@id": "http://example.org/github/73",
+  "generatedAt": "2012-04-09T10:00:00.23Z",
+  "@graph":
+  [
+    {
+      "@id": "#94573be",
+      "message": "Add things",
+      "refs": ["HEAD", "master"],
+      "parents": ["#3f2c2c2"],
+      "lane": 0
+    },
+    {
+      "@id": "#3f2c2c2",
+      "message": "Add stuff",
+      "refs": [],
+      "parents": ["#caffee1"],
+      "lane": 0
+    }
+  ]
+}

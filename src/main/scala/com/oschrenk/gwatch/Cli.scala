@@ -13,7 +13,15 @@ import org.eclipse.jgit.revplot.PlotCommit
 import org.eclipse.jgit.revplot.PlotLane
 import org.eclipse.jgit.revplot.PlotWalk
 
-case class Node(id: String, refs: Set[String], message: String, lane: Int, parents: Seq[String])
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
+
+case class Graph(`@context`: Context, `@id`: String, generatedAt: String, `@graph`: Seq[Node])
+case class Context(generatedAt: GeneratedAt)
+case class GeneratedAt(`@id`: String, `@type`: String)
+case class Node(`@id`: String, refs: Set[String], message: String, lane: Int, parents: Seq[String])
 
 object Formatters {
    val default: (RevCommit) => String = (rev: RevCommit) => {
@@ -118,11 +126,15 @@ object Cli extends App {
 
   list.source(walk)
   list.fillTo(Integer.MAX_VALUE)
+  walk.close
 
   val builder = Builder.node(allsRefs)
-  list.asScala.toSeq.foreach{c =>
-    println(builder(c))
+  val nodes = list.asScala.toSeq.map{c =>
+    builder(c)
   }
-  walk.close
+  val context = Context(GeneratedAt("id", "type"))
+  val graph = Graph(context, "graphId", "dateTime", nodes)
+
+  println(graph.asJson)
 }
 

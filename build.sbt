@@ -6,6 +6,9 @@ scalaVersion := "2.12.1"
 
 libraryDependencies ++= Seq(
   "org.eclipse.jgit" % "org.eclipse.jgit" % "4.6.0.201612231935-r",
+  "io.circe" %% "circe-core" % "0.7.0",
+  "io.circe" %% "circe-generic" % "0.7.0",
+  "io.circe" %% "circe-parser" % "0.7.0",
   "com.typesafe" % "config" % "1.3.1",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
   "ch.qos.logback" % "logback-classic" % "1.2.1",

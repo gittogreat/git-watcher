@@ -16,5 +16,9 @@ $ gwatch <dir>
 
 ## Resources
 
+### JGit
 http://www.codeaffine.com/2014/09/22/access-git-repository-with-jgit/
 http://download.eclipse.org/jgit/site/4.6.0.201612231935-r/apidocs/index.html
+
+### Graphs
+https://www.w3.org/TR/json-ld/
